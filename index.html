@@ -3,249 +3,90 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>메이플 미니 월드 - 2D 횡스크롤 웹RPG</title>
-  <meta name="description" content="설치 없이 즐기는 메이플 감성 2D 횡스크롤 RPG! 전사, 마법사, 궁수를 키우고 머쉬맘을 처치하세요.">
+  <title>배추 아케이드 - 무료 웹게임 포털</title>
+  <meta name="description" content="설치 없이 바로 즐기는 무료 웹게임 천국! 협곡 미니 대전 5:5, 메이플 미니 월드를 지금 플레이하세요.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Malgun Gothic', sans-serif; }
+    body { background: linear-gradient(135deg, #090d16 0%, #1e1b4b 100%); color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+    header { text-align: center; padding: 60px 20px 40px; }
+    header h1 { font-size: 2.6rem; color: #38bdf8; text-shadow: 0 0 20px rgba(56, 189, 248, 0.5); margin-bottom: 12px; }
+    header p { color: #94a3b8; font-size: 1.1rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px; width: 100%; max-width: 960px; padding: 20px; }
+    .card { background: rgba(30, 41, 59, 0.85); border: 2px solid #334155; border-radius: 18px; padding: 28px; transition: 0.25s; display: flex; flex-direction: column; justify-content: space-between; }
+    .card:hover { transform: translateY(-8px); border-color: #38bdf8; box-shadow: 0 12px 30px rgba(56, 189, 248, 0.25); }
+    .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; margin-bottom: 14px; width: fit-content; }
+    .b-moba { background: #1d4ed8; color: #dbeafe; }
+    .b-rpg { background: #ea580c; color: #ffedd5; }
+    .b-soon { background: #334155; color: #94a3b8; }
+    .card h2 { font-size: 1.5rem; margin-bottom: 10px; color: #fff; }
+    .card p { color: #cbd5e1; font-size: 0.95rem; line-height: 1.5; margin-bottom: 24px; }
+    .btn { display: block; width: 100%; border: none; cursor: pointer; text-align: center; background: #38bdf8; color: #090d16; font-weight: bold; padding: 14px; border-radius: 10px; font-size: 1.05rem; transition: 0.2s; }
+    .btn:hover { background: #7dd3fc; }
+    .btn.disabled { background: #475569; color: #94a3b8; cursor: not-allowed; }
+    footer { margin-top: auto; padding: 30px; color: #64748b; font-size: 0.9rem; }
+    #player { display: none; position: fixed; inset: 0; background: #000; z-index: 9999; flex-direction: column; }
+    #bar { height: 44px; background: #0f172a; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: space-between; padding: 0 18px; }
+    #bar span { font-weight: bold; color: #38bdf8; font-size: 0.95rem; }
+    #closeBtn { background: #ef4444; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    #closeBtn:hover { background: #dc2626; }
+    iframe { flex: 1; width: 100%; border: none; background: #000; }
+  </style>
 </head>
-<body style="margin:0;overflow:hidden;background:#0f172a;user-select:none">
-<canvas id="c"></canvas>
-<script>
-const c=document.getElementById("c"),x=c.getContext("2d"),VW=1280,VH=720,MW=2400,GR=0.65;
-c.width=VW;c.height=VH;c.style.cssText="width:100vw;height:100vh;display:block";
-const AC=new(window.AudioContext||window.webkitAudioContext)();
-function sfx(f,t,d,v){try{if(AC.state==="suspended")AC.resume();let o=AC.createOscillator(),g=AC.createGain();o.type=t||"sine";o.frequency.setValueAtTime(f,AC.currentTime);o.frequency.exponentialRampToValueAtTime(f*.35,AC.currentTime+d);g.gain.setValueAtTime(v||.07,AC.currentTime);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+d);o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d);}catch(e){}}
+<body>
+  <header>
+    <h1>🎮 배추 아케이드 (BAECHU ARCADE)</h1>
+    <p>다운로드 없이 브라우저에서 1초 만에 바로 즐기는 무료 웹게임 포털</p>
+  </header>
 
-let st="SEL",tk=0,camX=0,keys={},shop=0;
-const PLATS=[
-  {x:0,y:620,w:MW,h:100,g:1},
-  {x:180,y:480,w:340,h:24},{x:640,y:450,w:380,h:24},{x:1150,y:490,w:350,h:24},{x:1650,y:460,w:420,h:24},
-  {x:320,y:330,w:300,h:24},{x:820,y:300,w:340,h:24},{x:1350,y:320,w:360,h:24},{x:1850,y:280,w:320,h:24},
-  {x:580,y:170,w:320,h:24},{x:1120,y:160,w:360,h:24}
-];
-let p,M=[],P=[],D=[],FX=[];
+  <main class="grid">
+    <div class="card">
+      <div>
+        <span class="badge b-moba">5:5 팀전 MOBA</span>
+        <h2>협곡 미니 대전 5:5</h2>
+        <p>이즈리얼, 아리, 티모 등 9종의 챔피언을 선택해 라인을 밀고 적 넥서스를 파괴하세요! (PC & 모바일 지원)</p>
+      </div>
+      <button class="btn" onclick="play('협곡 미니 대전 5:5', 'https://github.io')">▶ 지금 플레이하기</button>
+    </div>
 
-function start(job){
-  st="PLAY";tk=0;M=[];P=[];D=[];FX=[];shop=0;
-  const J=[
-    {n:"전사",hp:250,mp:80,atk:38,cl:"#ef4444",w:"#94a3b8"},
-    {n:"마법사",hp:160,mp:220,atk:44,cl:"#3b82f6",w:"#a855f7"},
-    {n:"궁수",hp:190,mp:140,atk:40,cl:"#22c55e",w:"#facc15"}
-  ][job];
-  p={x:300,y:500,vx:0,vy:0,w:34,h:48,dir:1,jmp:0,job,jn:J.n,hp:J.hp,mhp:J.hp,mp:J.mp,mmp:J.mp,atk:J.atk,cl:J.cl,wc:J.w,lv:1,xp:0,nx:60,meso:200,hpPot:5,mpPot:5,enh:0,cd:0,inv:0};
-  for(let i=0;i<14;i++)spawnMob(i%3===0?1:0);
-  spawnMob(2);
-}
+    <div class="card">
+      <div>
+        <span class="badge b-rpg">2D 횡스크롤 RPG</span>
+        <h2>메이플 미니 월드</h2>
+        <p>전사·마법사·궁수로 전직해 슬라임과 머쉬맘을 사냥하고, 메소를 모아 무기를 강화해 보세요!</p>
+      </div>
+      <button class="btn" onclick="play('메이플 미니 월드', 'https://github.io')">▶ 지금 플레이하기</button>
+    </div>
 
-function spawnMob(tp){
-  let rx=200+Math.random()*(MW-400);
-  if(tp===0)M.push({tp:0,n:"슬라임",x:rx,y:200,vx:0,vy:0,w:38,h:32,hp:90,mhp:90,atk:12,xp:18,ms:35,cl:"#4ade80",dir:1});
-  else if(tp===1)M.push({tp:1,n:"주황버섯",x:rx,y:200,vx:0,vy:0,w:42,h:44,hp:160,mhp:160,atk:22,xp:32,ms:65,cl:"#f97316",dir:-1});
-  else M.push({tp:2,n:"★머쉬맘★",x:1850,y:200,vx:0,vy:0,w:88,h:84,hp:1400,mhp:1400,atk:48,xp:250,ms:500,cl:"#fb7185",dir:-1});
-}
+    <div class="card">
+      <div>
+        <span class="badge b-soon">COMING SOON</span>
+        <h2>신작 게임 준비 중</h2>
+        <p>곧 새로운 장르의 중독성 넘치는 웹게임이 추가될 예정입니다. 기대해 주세요!</p>
+      </div>
+      <button class="btn disabled">업데이트 예정</button>
+    </div>
+  </main>
 
-function dmgFx(x,y,v,crit){FX.push({x,y,vy:-1.8,v,crit,t:42,mt:42});}
-function gainXp(v){
-  p.xp+=v;
-  while(p.xp>=p.nx){
-    p.xp-=p.nx;p.lv++;p.nx=Math.round(p.nx*1.35);
-    p.mhp+=35;p.mmp+=20;p.atk+=8;p.hp=p.mhp;p.mp=p.mmp;
-    sfx(720,"triangle",.35,.14);dmgFx(p.x,p.y-40,"LEVEL UP!",1);
-  }
-}
+  <div id="player">
+    <div id="bar">
+      <span id="gTitle">게임 실행 중</span>
+      <button id="closeBtn" onclick="closeGame()">✖ 로비로 돌아가기</button>
+    </div>
+    <iframe id="gFrame" src=""></iframe>
+  </div>
 
-window.onkeydown=e=>{
-  let k=e.key.toLowerCase();keys[k]=1;
-  if(st==="SEL"){if(k==="1"||k==="2"||k==="3")start(+k-1);return;}
-  if(st==="OVER"){if(k==="r")st="SEL";return;}
-  if(k==="b"){shop=!shop;return;}
-  if(shop){
-    if(k==="1"&&p.meso>=50){p.meso-=50;p.hpPot+=3;sfx(600,"sine",.1,.08);}
-    if(k==="2"&&p.meso>=50){p.meso-=50;p.mpPot+=3;sfx(600,"sine",.1,.08);}
-    if(k==="3"&&p.meso>=150){p.meso-=150;p.enh++;p.atk+=12;sfx(820,"triangle",.2,.12);}
-    return;
-  }
-  if((k==="c"||e.code==="AltLeft"||k===" ")&&p.jmp<2){
-    p.vy=p.jmp===1?-12.5:-13.5;p.jmp++;sfx(420+p.jmp*120,"sine",.12,.08);
-  }
-  if(k==="1"&&p.hpPot>0&&p.hp<p.mhp){p.hpPot--;p.hp=Math.min(p.mhp,p.hp+110);sfx(680,"sine",.12,.09);dmgFx(p.x,p.y-20,"+110 HP",0);}
-  if(k==="2"&&p.mpPot>0&&p.mp<p.mmp){p.mpPot--;p.mp=Math.min(p.mmp,p.mp+90);sfx(740,"sine",.12,.09);dmgFx(p.x,p.y-20,"+90 MP",0);}
-  if(k==="z"){
-    for(let i=D.length-1;i>=0;i--){
-      if(Math.abs(D[i].x-p.x)<55&&Math.abs(D[i].y-p.y)<55){
-        if(D[i].tp===0)p.meso+=D[i].v;else if(D[i].tp===1)p.hpPot++;else p.mpPot++;
-        sfx(880,"sine",.07,.07);D.splice(i,1);
-      }
+  <footer>© 2026 BaeChu Arcade. All games playable free in browser.</footer>
+
+  <script>
+    function play(title, url) {
+      document.getElementById('gTitle').textContent = '🎮 ' + title;
+      document.getElementById('gFrame').src = url + '?v=' + Date.now();
+      document.getElementById('player').style.display = 'flex';
     }
-  }
-  if((k==="x"||k==="ctrl")&&p.cd<=0)attack(0);
-  if(k==="a"&&p.cd<=0&&p.mp>=15){p.mp-=15;attack(1);}
-};
-window.onkeyup=e=>keys[e.key.toLowerCase()]=0;
-c.onmousedown=e=>{
-  if(st!=="SEL")return;
-  let r=c.getBoundingClientRect(),mx=(e.clientX-r.left)/r.width*VW;
-  start(mx<440?0:mx<840?1:2);
-};
-
-function attack(sk){
-  p.cd=sk?24:18;sfx(sk?300:460,sk?"sawtooth":"triangle",.14,.09);
-  if(p.job===0){
-    let rng=sk?155:95,mul=sk?1.75:1.1;
-    P.push({tp:0,x:p.x+p.dir*(rng/2),y:p.y,w:rng,h:65,dir:p.dir,d:p.atk*mul,life:8,cl:sk?"#facc15":"#fff",hit:[]});
-  }else if(p.job===1){
-    let cnt=sk?3:1;
-    for(let i=0;i<cnt;i++)P.push({tp:1,x:p.x+p.dir*24,y:p.y+(i-(cnt-1)/2)*18,vx:p.dir*11,vy:0,r:sk?13:9,d:p.atk*(sk?1.35:1.15),life:38,cl:sk?"#a855f7":"#38bdf8",hit:[]});
-  }else{
-    let cnt=sk?4:2;
-    for(let i=0;i<cnt;i++)P.push({tp:2,x:p.x+p.dir*22,y:p.y-6+i*5,vx:p.dir*(13+i),vy:sk?-2+i:0,r:8,d:p.atk*(sk?0.9:0.75),life:45,cl:sk?"#facc15":"#4ade80",hit:[]});
-  }
-}
-function update(){
-  tk++;if(p.cd>0)p.cd--;if(p.inv>0)p.inv--;
-  if(tk%120===0)p.mp=Math.min(p.mmp,p.mp+4);
-  if(keys["arrowleft"]){p.vx=-4.8;p.dir=-1;}
-  else if(keys["arrowright"]){p.vx=4.8;p.dir=1;}
-  else p.vx*=0.75;
-
-  let pyPrev=p.y+p.h/2;
-  p.vy+=GR;p.x=Math.max(25,Math.min(MW-25,p.x+p.vx));p.y+=p.vy;
-  if(p.vy>=0){
-    for(let pl of PLATS){
-      if(p.x>pl.x-15&&p.x<pl.x+pl.w+15&&pyPrev<=pl.y+8&&p.y+p.h/2>=pl.y){
-        p.y=pl.y-p.h/2;p.vy=0;p.jmp=0;break;
-      }
+    function closeGame() {
+      document.getElementById('gFrame').src = '';
+      document.getElementById('player').style.display = 'none';
     }
-  }
-  camX=Math.max(0,Math.min(MW-VW,p.x-VW/2));
-
-  for(let i=P.length-1;i>=0;i--){
-    let pr=P[i];if(pr.vx){pr.x+=pr.vx;pr.y+=pr.vy;}
-    if(--pr.life<=0){P.splice(i,1);continue;}
-    for(let m of M){
-      if(m.hp<=0||pr.hit.includes(m))continue;
-      let hit=pr.tp===0?(Math.abs(m.x-pr.x)<(m.w+pr.w)/2&&Math.abs(m.y-pr.y)<(m.h+pr.h)/2):(Math.abs(m.x-pr.x)<m.w/2+pr.r&&Math.abs(m.y-pr.y)<m.h/2+pr.r);
-      if(hit){
-        let crit=Math.random()<0.25,dmg=Math.round(pr.d*(crit?1.5:0.9+Math.random()*0.2));
-        m.hp-=dmg;m.vx=pr.dir*(m.tp===2?1.5:5.5);m.vy=-3;pr.hit.push(m);
-        dmgFx(m.x,m.y-m.h/2,dmg,crit);sfx(240,"square",.06,.06);
-        if(m.hp<=0){
-          gainXp(m.xp);
-          D.push({tp:0,x:m.x,y:m.y,vy:-5,v:m.ms,life:900});
-          if(Math.random()<0.35)D.push({tp:Math.random()<0.6?1:2,x:m.x+16,y:m.y,vy:-6,v:1,life:900});
-          let deadTp=m.tp;setTimeout(()=>spawnMob(deadTp),deadTp===2?12000:3500);
-        }
-        if(pr.tp!==0){P.splice(i,1);break;}
-      }
-    }
-  }
-  M=M.filter(m=>m.hp>0);
-
-  for(let m of M){
-    if(tk%70===0&&Math.random()<0.6)m.dir=Math.random()<0.5?-1:1;
-    if(m.tp===2&&tk%90===0){m.dir=p.x>m.x?1:-1;m.vy=-11;}
-    m.vx+=(m.dir*(m.tp===2?2.4:1.5)-m.vx)*0.15;
-    let myPrev=m.y+m.h/2;m.vy+=GR;m.x=Math.max(40,Math.min(MW-40,m.x+m.vx));m.y+=m.vy;
-    if(m.vy>=0){
-      for(let pl of PLATS)if(m.x>pl.x&&m.x<pl.x+pl.w&&myPrev<=pl.y+8&&m.y+m.h/2>=pl.y){m.y=pl.y-m.h/2;m.vy=0;break;}
-    }
-    if(p.inv<=0&&Math.abs(p.x-m.x)<(p.w+m.w)/2-6&&Math.abs(p.y-m.y)<(p.h+m.h)/2-6){
-      p.hp-=m.atk;p.inv=55;p.vy=-6;p.vx=(p.x<m.x?-1:1)*6;
-      dmgFx(p.x,p.y-30,"-"+m.atk,1);sfx(160,"sawtooth",.2,.1);
-      if(p.hp<=0){st="OVER";sfx(110,"sawtooth",.5,.15);}
-    }
-  }
-
-  for(let i=D.length-1;i>=0;i--){
-    let d=D[i];if(--d.life<=0){D.splice(i,1);continue;}
-    let dyPrev=d.y+10;d.vy+=GR;d.y+=d.vy;
-    for(let pl of PLATS)if(d.vy>=0&&d.x>pl.x&&d.x<pl.x+pl.w&&dyPrev<=pl.y+6&&d.y+10>=pl.y){d.y=pl.y-10;d.vy=0;break;}
-  }
-  for(let i=FX.length-1;i>=0;i--){FX[i].y+=FX[i].vy;if(--FX[i].t<=0)FX.splice(i,1);}
-}
-
-function loop(){
-  requestAnimationFrame(loop);
-  if(st==="SEL"){
-    let gr=x.createLinearGradient(0,0,0,VH);gr.addColorStop(0,"#38bdf8");gr.addColorStop(1,"#fef08a");x.fillStyle=gr;x.fillRect(0,0,VW,VH);
-    x.fillStyle="#1e293b";x.font="bold 38px sans-serif";x.fillText("메이플 미니 월드 - 직업을 선택하세요 (클릭 또는 1~3)",210,120);
-    const cards=[
-      {t:"1. 전사 (Warrior)",d:"높은 체력 / 근접 광역 베기",c:"#ef4444"},
-      {t:"2. 마법사 (Magician)",d:"강력한 원거리 마법 탄환",c:"#3b82f6"},
-      {t:"3. 궁수 (Bowman)",d:"빠른 연사 다중 화살 공격",c:"#22c55e"}
-    ];
-    for(let i=0;i<3;i++){
-      let bx=150+i*340;x.fillStyle="rgba(255,255,255,.92)";x.fillRect(bx,190,300,360);x.strokeStyle=cards[i].c;x.lineWidth=5;x.strokeRect(bx,190,300,360);
-      x.fillStyle=cards[i].c;x.beginPath();x.arc(bx+150,300,45,0,7);x.fill();
-      x.fillStyle="#0f172a";x.font="bold 24px sans-serif";x.fillText(cards[i].t,bx+48,405);
-      x.font="15px sans-serif";x.fillStyle="#475569";x.fillText(cards[i].d,bx+45,450);
-    }
-    return;
-  }
-  if(st==="PLAY")update();
-
-  let sky=x.createLinearGradient(0,0,0,VH);sky.addColorStop(0,"#7dd3fc");sky.addColorStop(1,"#e0f2fe");x.fillStyle=sky;x.fillRect(0,0,VW,VH);
-  x.save();x.translate(-camX,0);
-  x.fillStyle="rgba(255,255,255,.75)";for(let i=100;i<MW;i+=380){x.beginPath();x.arc(i,110,36,0,7);x.arc(i+30,105,44,0,7);x.arc(i+65,112,32,0,7);x.fill();}
-
-  for(let pl of PLATS){
-    x.fillStyle="#92400e";x.fillRect(pl.x,pl.y,pl.w,pl.h);
-    x.fillStyle="#65a30d";x.fillRect(pl.x,pl.y,pl.w,10);
-  }
-
-  for(let d of D){
-    x.fillStyle=d.tp===0?"#facc15":d.tp===1?"#ef4444":"#3b82f6";
-    x.beginPath();x.arc(d.x,d.y,9,0,7);x.fill();x.strokeStyle="#fff";x.lineWidth=1.5;x.stroke();
-  }
-
-  for(let m of M){
-    x.fillStyle=m.cl;x.beginPath();x.roundRect(m.x-m.w/2,m.y-m.h/2,m.w,m.h,14);x.fill();
-    x.fillStyle="#0f172a";x.beginPath();x.arc(m.x+m.dir*8,m.y-4,m.tp===2?6:3.5,0,7);x.fill();
-    x.fillStyle="#1e293b";x.fillRect(m.x-m.w/2,m.y-m.h/2-14,m.w,6);
-    x.fillStyle="#ef4444";x.fillRect(m.x-m.w/2,m.y-m.h/2-14,m.w*(m.hp/m.mhp),6);
-    x.fillStyle="#fff";x.font="bold 11px sans-serif";x.fillText(m.n,m.x-m.w/2,m.y+m.h/2+14);
-  }
-
-  if(p.inv%6<4){
-    x.fillStyle=p.cl;x.beginPath();x.roundRect(p.x-p.w/2,p.y-p.h/2,p.w,p.h,8);x.fill();
-    x.fillStyle="#fde68a";x.beginPath();x.arc(p.x,p.y-14,13,0,7);x.fill();
-    x.fillStyle="#0f172a";x.fillRect(p.x+p.dir*4,p.y-17,4,5);
-    x.fillStyle=p.wc;x.fillRect(p.x+p.dir*14,p.y-4,p.dir*24,6);
-  }
-
-  for(let pr of P){
-    x.fillStyle=pr.cl;
-    if(pr.tp===0){x.globalAlpha=.65;x.fillRect(pr.x-pr.w/2,pr.y-pr.h/2,pr.w,pr.h);x.globalAlpha=1;}
-    else{x.beginPath();x.arc(pr.x,pr.y,pr.r,0,7);x.fill();}
-  }
-
-  for(let f of FX){
-    x.globalAlpha=f.t/f.mt;x.fillStyle=f.crit?"#ef4444":"#f97316";x.strokeStyle="#fff";x.lineWidth=3;
-    x.font=f.crit?"bold 24px sans-serif":"bold 18px sans-serif";
-    x.strokeText(f.v,f.x-15,f.y);x.fillText(f.v,f.x-15,f.y);x.globalAlpha=1;
-  }
-  x.restore();
-
-  x.fillStyle="rgba(15,23,42,.9)";x.fillRect(0,VH-68,VW,68);
-  x.fillStyle="#fff";x.font="bold 15px sans-serif";x.fillText("Lv."+p.lv+" "+p.jn+" (+"+p.enh+"강)",20,VH-38);
-  x.fillStyle="#334155";x.fillRect(210,VH-52,180,16);x.fillStyle="#ef4444";x.fillRect(210,VH-52,180*Math.max(0,p.hp/p.mhp),16);
-  x.fillStyle="#fff";x.font="11px sans-serif";x.fillText("HP "+Math.ceil(p.hp)+"/"+p.mhp,255,VH-40);
-  x.fillStyle="#334155";x.fillRect(405,VH-52,180,16);x.fillStyle="#3b82f6";x.fillRect(405,VH-52,180*Math.max(0,p.mp/p.mmp),16);
-  x.fillStyle="#fff";x.fillText("MP "+Math.ceil(p.mp)+"/"+p.mmp,450,VH-40);
-  x.fillStyle="#334155";x.fillRect(210,VH-28,375,12);x.fillStyle="#facc15";x.fillRect(210,VH-28,375*(p.xp/p.nx),12);
-  x.fillStyle="#facc15";x.font="bold 14px sans-serif";x.fillText("메소: "+p.meso+" |빨간포션:"+p.hpPot+"파란포션:"+p.mpPot+" | [Z]줍기 [X]기본 [A]스킬 [C]2단점프 [B]상점",605,VH-32);
-
-  if(shop){
-    x.fillStyle="rgba(15,23,42,.94)";x.fillRect(420,160,440,320);x.strokeStyle="#facc15";x.lineWidth=3;x.strokeRect(420,160,440,320);
-    x.fillStyle="#facc15";x.font="bold 24px sans-serif";x.fillText("헤네시스 잡화 & 강화 상점 ([B] 닫기)",460,210);
-    x.fillStyle="#fff";x.font="17px sans-serif";
-    x.fillText(" 빨간 포션 3개 구매 (50 메소)",460,275);
-    x.fillText(" 파란 포션 3개 구매 (50 메소)",460,325);
-    x.fillText(" 무기 주문서 강화 +12ATK (150 메소)",460,375);
-  }
-  if(st==="OVER"){
-    x.fillStyle="rgba(0,0,0,.8)";x.fillRect(0,0,VW,VH);x.fillStyle="#ef4444";x.font="bold 52px sans-serif";x.fillText("비석이 떨어졌습니다...",410,330);
-    x.fillStyle="#fff";x.font="22px sans-serif";x.fillText("[R] 키를 눌러 다시 시작",510,390);
-  }
-}loop();
-</script>
+  </script>
 </body>
 </html>
